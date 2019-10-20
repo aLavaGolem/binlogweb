@@ -15,6 +15,45 @@
     <input type=file name=photo id="file">
     <input type=button value="提交" onclick="submit()">
 </div>
+<div>
+    <p>上传文件的名字：<span id="uploadName"></span></p>
+    <input type="button" value="开始解析" onclick="parsing()">
+</div>
+<div>
+    <table border="1">
+    <tr>
+        <th>选择</th>
+        <th>序号</th>
+        <th>文件名</th>
+        <th>开始节点</th>
+        <th>结束节点</th>
+        <th>时间</th>
+        <th>sql语句</th>
+        <th>创建时间</th>
+    </tr>
+    <tr>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+    </tr>
+    <tr>
+       <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+        <td>row 1, cell 1</td>
+        <td>row 1, cell 2</td>
+    </tr>
+</table>
+</div>
+
 </body>
  <script type="text/javascript">
     function submit(){
@@ -29,9 +68,27 @@
             contentType: false,
             processData: false,
             success: function(data){
+               $('#uploadName').text(data.filename);
                alert(data.msg)
             }
         });
+    }
+    function parsing(){
+        var filename=$('#uploadName').text();
+        var data = new FormData();
+        data.append('filename', filename);  //参数名：file
+        $.ajax({
+            url: "{{ url_for('upload') }}",
+            type: 'get',
+            data: data,
+            cache: false, //禁止浏览器对该URL的缓存
+            contentType: false,
+            processData: false,
+            success: function(data){
+               alert(data.msg)
+            }
+        });
+
     }
 </script>
 </html>
