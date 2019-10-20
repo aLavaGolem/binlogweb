@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--<form method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">-->
+<!--    <input type=file name=photo>-->
+<!--    <input type=submit>-->
+<!--</form>-->
+<div>
+    <input type=file name=photo id="file">
+    <input type=button value="提交" onclick="submit()">
+</div>
+</body>
+ <script type="text/javascript">
+    function submit(){
+        var files = $("#file").prop('files');
+        var data = new FormData();
+        data.append('photo', files[0]);  //参数名：file
+        $.ajax({
+            url: "{{ url_for('upload') }}",
+            type: 'POST',
+            data: data,
+            cache: false, //禁止浏览器对该URL的缓存
+            contentType: false,
+            processData: false,
+            success: function(data){
+               alert(data.msg)
+            }
+        });
+    }
+</script>
+</html>
