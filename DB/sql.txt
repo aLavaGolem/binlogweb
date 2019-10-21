@@ -1,4 +1,4 @@
-#创建数据库
+﻿#创建数据库
 $sqlite3 binlog.db
 #设置表id自增长
 CREATE TABLE Product(ID INTEGER PRIMARY KEY AUTOINCREMENT,Name NVARCHAR(100) NOT NULL);
@@ -18,6 +18,6 @@ INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-11 21:00:11','up
 INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-12 21:00:11','update table sfds set a =1 where id =2','2019-10-31 21:00:11');
 INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-15 21:00:11','update table sfds set a =1 where id =2','2019-10-31 21:00:11');
 INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-01 21:00:11','update table sfds set a =1 where id =2','2019-10-31 21:00:11');
-INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-02 21:00:11','update table sfds set a =1 where id =2','2019-10-31 21:00:11');
+INSERT INTO binlog VALUES (NULL,'/1.txt','get',100,200,'2019-10-02 21:00:11','中文','2019-10-31 21:00:11');
 #查询
 select * from binlog order by time ;

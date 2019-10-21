@@ -1,9 +1,11 @@
+# _*_ coding:UTF-8 _*_
 from flask_uploads import UploadSet, IMAGES, configure_uploads, ALL, TEXT
 from flask import request, Flask, redirect, url_for, render_template, jsonify
 import os
 import re
 import sqlite3
 from flask import g
+import time
 
 
 
@@ -41,6 +43,8 @@ def show(name):
 @app.route('/parsing')
 def parsing():
     filename=request.args.get("filename")
+    print("------------")
+    print(filename)
     if filename is None:
         os.abort(404)
     filepath=photos.path(filename)
@@ -49,6 +53,9 @@ def parsing():
     data = {'flag': '00', 'msg': '解析成功', 'filename': filename}
     return jsonify(data)
 
+@app.route('/query')
+def query():
+    return jsonify(query_db("select * from binlog"))
 
 ####DB
 DATABASE = 'DB/binlog.db'
@@ -80,6 +87,17 @@ def update_db(query):
     # 提交到数据库执行
     db.commit()
     cursor.close()
+def updateSql(method,dir):
+    #{'start':start,'end':end,'time':time,'sql':sql}
+    start = dir['start']
+    end = dir['end']
+    timedate = dir['time']
+    sql = dir['sql']
+
+    filepath = dir['filepath']
+    print(sql+"********************************************")
+    nowTime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    update_db("INSERT INTO binlog VALUES (NULL,'"+filepath.replace("/", "//")+"','"+method+"',"+start+","+end+",'"+timedate+"','"+sql.replace("'", "''")+"','"+nowTime+"');" )
 
 ####方法
 #解析文件
@@ -95,12 +113,27 @@ def readFile(filepath):
                 str = ""
             str += line
         arrayAppend(deleteArray, insertArray, updateArray, str)
-
+    # DELETE
     for i in range(len(deleteArray)):
-        print(deleteArray[i])
         a=arrayComm(deleteArray[i]);
-        print(a)
-        print(type(a))
+        a['filepath']=filepath
+        updateSql("DELETE",a)
+
+
+     # INSTER
+    for i in range(len(insertArray)):
+        a = arrayComm(insertArray[i]);
+        a['filepath'] = filepath
+        updateSql("INSERT", a)
+    #UPDATE
+    for i in range(len(updateArray)):
+        a=arrayComm(updateArray[i]);
+        a['filepath']=filepath
+        updateSql("UPDATE",a)
+
+
+
+
 #判断类型添加到数组
 def arrayAppend(arr,arr2,arr3,str):
     if str.find("DELETE") != -1:

@@ -73,17 +73,19 @@
             }
         });
     }
+    var lock=0;
     function parsing(){
+        if(lock==1){
+            lock=1;
+            return;
+        }
         var filename=$('#uploadName').text();
-        var data = new FormData();
-        data.append('filename', filename);  //参数名：file
+        //var data = new FormData();
+        //data.append('filename', filename);  //参数名：file
         $.ajax({
-            url: "{{ url_for('upload') }}",
+            url: "{{ url_for('parsing') }}",
             type: 'get',
-            data: data,
-            cache: false, //禁止浏览器对该URL的缓存
-            contentType: false,
-            processData: false,
+            data: {'filename':filename},
             success: function(data){
                alert(data.msg)
             }
