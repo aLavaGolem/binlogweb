@@ -1,5 +1,5 @@
 ﻿#创建数据库
-$sqlite3 binlog.db
+sqlite3 binlog.db
 #设置表id自增长
 CREATE TABLE Product(ID INTEGER PRIMARY KEY AUTOINCREMENT,Name NVARCHAR(100) NOT NULL);
 INSERT INTO Product VALUES(NULL, '產品名稱');

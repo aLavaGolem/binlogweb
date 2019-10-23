@@ -48,14 +48,23 @@ def parsing():
     if filename is None:
         os.abort(404)
     filepath=photos.path(filename)
-    dir=readFile(filepath)
+    dir=readFile(filepath,filename)
 
     data = {'flag': '00', 'msg': '解析成功', 'filename': filename}
     return jsonify(data)
 
 @app.route('/query')
 def query():
-    return jsonify(query_db("select * from binlog"))
+    filename=request.args.get("filename")
+    method=request.args.get("method")
+    print("filename :"+filename)
+    where=""
+    if filename is not  None and filename!="":
+        where+="and filename='"+filename.replace("/", "//")+"'"
+    if method is not  None and method!="":
+        where+="and method='"+method+"'"
+
+    return jsonify(query_db("select * from binlog where 1=1 "+where))
 
 ####DB
 DATABASE = 'DB/binlog.db'
@@ -101,7 +110,7 @@ def updateSql(method,dir):
 
 ####方法
 #解析文件
-def readFile(filepath):
+def readFile(filepath,filename):
     deleteArray = []
     insertArray =[]
     updateArray =[]
@@ -116,19 +125,19 @@ def readFile(filepath):
     # DELETE
     for i in range(len(deleteArray)):
         a=arrayComm(deleteArray[i]);
-        a['filepath']=filepath
+        a['filepath']=filename
         updateSql("DELETE",a)
 
 
      # INSTER
     for i in range(len(insertArray)):
         a = arrayComm(insertArray[i]);
-        a['filepath'] = filepath
+        a['filepath'] = filename
         updateSql("INSERT", a)
     #UPDATE
     for i in range(len(updateArray)):
         a=arrayComm(updateArray[i]);
-        a['filepath']=filepath
+        a['filepath']=filename
         updateSql("UPDATE",a)
 
 

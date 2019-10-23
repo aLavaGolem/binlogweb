@@ -17,40 +17,37 @@
 </div>
 <div>
     <p>上传文件的名字：<span id="uploadName"></span></p>
-    <input type="button" value="开始解析" onclick="parsing()">
+    <!--<input type="button" value="开始解析" onclick="parsing()">-->
+    <input type="button" value="导出">
+    <input type="button" value="逆向导出">
+
+    <select id ="method">
+        <option value ="">请选择方法</option>
+        <option value ="DELETE">DELETE</option>
+        <option value ="UPDATE">UPDATE</option>
+        <option value="INSERT">INSERT</option>
+    </select>
+    <input type="button" value="查询" onclick="query()">
+
+
 </div>
 <div>
     <table border="1">
-    <tr>
-        <th>选择</th>
-        <th>序号</th>
-        <th>文件名</th>
-        <th>开始节点</th>
-        <th>结束节点</th>
-        <th>时间</th>
-        <th>sql语句</th>
-        <th>创建时间</th>
-    </tr>
-    <tr>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-    </tr>
-    <tr>
-       <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-    </tr>
+        <thead>
+            <tr>
+                <th>选择</th>
+                <th>序号</th>
+                <th>文件名</th>
+                <th>方法</th>
+                <th>开始节点</th>
+                <th>结束节点</th>
+                <th>时间</th>
+                <th>sql语句</th>
+                <th>创建时间</th>
+            </tr>
+        </thead>
+        <tbody id="data">
+        </tbody>
 </table>
 </div>
 
@@ -69,16 +66,15 @@
             processData: false,
             success: function(data){
                $('#uploadName').text(data.filename);
-               alert(data.msg)
+               parsing();
+              // alert(data.msg)
+
             }
         });
     }
-    var lock=0;
+
     function parsing(){
-        if(lock==1){
-            lock=1;
-            return;
-        }
+
         var filename=$('#uploadName').text();
         //var data = new FormData();
         //data.append('filename', filename);  //参数名：file
@@ -87,10 +83,39 @@
             type: 'get',
             data: {'filename':filename},
             success: function(data){
+                query()
                alert(data.msg)
+
             }
         });
 
     }
+
+    function query(){
+         var filename=$('#uploadName').text();
+         var method=$('#method').val();
+        $.ajax({
+            url: "{{ url_for('query') }}",
+            type: 'get',
+            data: {'filename':filename,'method':method},
+            success: function(data){
+               console.log(data)
+               var str="";
+               for(var i=0;i<data.length;i++){
+                    str+=   "<tr><td><input name=\"binglogid\" type=\"checkbox\" value=\""+data[i][0]+"\" /></td>"+
+                            "<td>"+(i+1)+"</td>"+
+                            "<td>"+data[i][1]+"</td>"+
+                            "<td>"+data[i][2]+"</td>"+
+                            "<td>"+data[i][3]+"</td>"+
+                            "<td>"+data[i][4]+"</td>"+
+                            "<td>"+data[i][5]+"</td>"+
+                            "<td>"+data[i][6]+"</td>"+
+                            "<td>"+data[i][7]+"</td></tr>"
+               }
+               $('#data').html(str);
+            }
+        });
+    }
+
 </script>
 </html>
